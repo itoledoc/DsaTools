@@ -168,17 +168,17 @@ def do_pre_plots(ra, used, tot_t, filename, title, lab=False, xleg='', yleg='',
                  ymax=None):
     py.close()
     py.figure(figsize=(11.69, 8.27))
-    # py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4] + used[5] +
-    #        used[6],
-    #        width=1.66666667e-02, ec='#4575b4', fc='#4575b4', label='Band 10')
-    # py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4] + used[5],
-    #        width=1.66666667e-02, ec='#91bfdb', fc='#91bfdb', label='Band 9')
-    # py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4],
-    #        width=1.66666667e-02, ec='#e0f3f8', fc='#e0f3f8', label='Band 8')
+    py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4] + used[5] +
+           used[6],
+           width=1.66666667e-02, ec='#4575b4', fc='#4575b4', label='Band 10')
+    py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4] + used[5],
+           width=1.66666667e-02, ec='#91bfdb', fc='#91bfdb', label='Band 9')
+    py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4],
+           width=1.66666667e-02, ec='#abd9e9', fc='#abd9e9', label='Band 8')
     py.bar(ra, used[0] + used[1] + used[2] + used[3],
-           width=1.66666667e-02, ec='#4575b4', fc='#4575b4', label='Band 7')
+           width=1.66666667e-02, ec='#e0f3f8', fc='#e0f3f8', label='Band 7')
     py.bar(ra, used[0] + used[1] + used[2],
-           width=1.66666667e-02, ec='#91bfdb', fc='#91bfdb', label='Band 6')
+           width=1.66666667e-02, ec='#fee090', fc='#fee090', label='Band 6')
     py.bar(ra, used[0] + used[1],
            width=1.66666667e-02, ec='#fc8d59', fc='#fc8d59', label='Band 4')
     py.bar(ra, used[0],
@@ -218,30 +218,31 @@ datas.aqua_execblock['LST_END'] = datas.aqua_execblock.apply(
 
 def plots_remaining(conf):
 
-    c368 = datas.schedblocks.query(
-        'OT_BestConf == @conf')[
+    sel1 = dsa.data.schedblocks.query('array == "TWELVE-M" and DC_LETTER_GRADE != "C"')[
         ['SB_UID', 'SG_ID', 'OUS_ID', 'sbName', 'sbNote', 'band', 'RA',
          'execount', 'OBSPROJECT_UID', 'isPolarization', 'estimatedTime']]
 
-    c368_s = pd.merge(c368, datas.sb_status[['SB_UID', 'SB_STATE']],
+    sel2 = pd.merge(sel1, dsa.data.sb_status[['SB_UID', 'SB_STATE']],
                       on='SB_UID', how='left')
-    c368_ss = pd.merge(
+    sel3 = pd.merge(
         datas.sciencegoals[['OBSPROJECT_UID', 'OUS_ID', 'isTimeConstrained']],
-        c368_s, on=['OBSPROJECT_UID', 'OUS_ID'])
-    c368_ssp = pd.merge(
+        sel2, on=['OBSPROJECT_UID', 'OUS_ID'], how='right')
+    sel4 = pd.merge(
         pd.merge(
-            datas.projects[['OBSPROJECT_UID', 'CODE', 'PRJ_STATUS', 'CYCLE',
+            dsa.data.projects[['OBSPROJECT_UID', 'CODE', 'PRJ_STATUS', 'CYCLE',
                             'DC_LETTER_GRADE']],
-            datas.obsproject[['OBSPROJECT_UID', 'NOTE']], on='OBSPROJECT_UID'),
-        c368_ss, on='OBSPROJECT_UID', how='right')
+            dsa.data.obsproject[['OBSPROJECT_UID', 'NOTE']], on='OBSPROJECT_UID'),
+        sel3, on='OBSPROJECT_UID', how='right')
 
-    table_8 = c368_ssp.query(
-        'CYCLE != "2013.A" and DC_LETTER_GRADE != "C"').sort('RA')
+    table_8 = sel4.query(
+        'CYCLE != ["2013.A", "2013.1"] and DC_LETTER_GRADE != "C"').sort('RA')
 
     table_8 = pd.merge(
         table_8,
-        datas.obs_param,
+        dsa.obs_param,
         on='SB_UID', how='left').set_index('SB_UID', drop=False)
+
+    table_8.set.fillna(0, inplace=True)
 
     table_8['rise_lst'] = table_8.apply(
         lambda ro1: pd.Timestamp.time(
@@ -257,23 +258,13 @@ def plots_remaining(conf):
     table_8['set_lst'] = table_8.set_lst.astype(str).str.slice(0, 5)
     table_8['range'] = table_8.rise_lst + '-' + table_8.set_lst
 
-    # noinspection PyUnusedLocal
-    sbs = table_8.index.unique()
-    qastatus = datas.aqua_execblock.query(
-        'SB_UID in @sbs').groupby(
-        ['SB_UID', 'QA0STATUS']).QA0STATUS.count().unstack().fillna(0)
+    table_8 = table_8.query('RA != 0').copy()
 
-    table_8b = pd.merge(
-        table_8, qastatus.reset_index(),
-        left_index=True, right_on='SB_UID', how='left').fillna(0)
-
-    t8 = table_8b.query('SB_STATE != "FullyOb"').copy()
-
-    t8['estimatedTime_SB'] = t8.estimatedTime
-    t8['estimatedTime_SB'] = t8.apply(
+    table_8['estimatedTime_SB'] = table_8.estimatedTime
+    table_8['estimatedTime_SB'] = table_8.apply(
         lambda x: 0 if x['estimatedTime_SB'] < 0 else x['estimatedTime_SB'],
         axis=1)
-    rab, usedb = av_arrays(t8, minlst=-3., maxlst=3.)
+    rab, usedb = av_arrays(table_8, minlst=-3., maxlst=3.)
     ymax = do_pre_plots(
         rab, usedb, 0, '%s_all.png' % conf,
         '%s original pressure' % conf, lab=True,

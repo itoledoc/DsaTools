@@ -36,10 +36,10 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + '_tabl_all/',
-                              allc2=False, loadp1=False)
+                              allc2=True, loadp1=True)
 except IOError:
     datas = Data.DsaDatabase3(path=path + '_tabl_all/',
-                              allc2=False, loadp1=False)
+                              allc2=True, loadp1=True)
 
 dsa = Dsa.DsaAlgorithm3(datas)
 
@@ -48,7 +48,7 @@ dsa.static_param()
 pwv = pd.read_sql('pwv_data', engine).pwv.values[0]
 dsa.selector(
     minha=-3., maxha=3., letterg=['A', 'B', 'C'],
-    conf=['C36-2'], pwv=pwv)
+    conf=['C36-2'], pwv=pwv, sim=True)
 dsa.selection_df['PWV now'] = pwv
 dsa.selection_df['PWV now date'] = (
     pd.read_sql('pwv_data', engine).date.values[0] + ' ' +
