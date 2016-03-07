@@ -45,7 +45,7 @@ dsa = Dsa.DsaAlgorithm3(datas)
 
 dsa.write_ephem_coords()
 dsa.static_param()
-pwv = pd.read_sql('pwv_data', engine).pwv.values[0]
+pwv = pd.read_sql('SELECT * FROM pwv_data ORDER BY id DESC LIMIT 1', engine).pwv.values[0]
 dsa.selector(
     minha=-3., maxha=3., letterg=['A', 'B', 'C'],
     conf=['C36-2'], pwv=pwv, sim=True)
