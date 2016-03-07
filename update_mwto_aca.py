@@ -38,10 +38,10 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_aca/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 except IOError:
     datas = Data.DsaDatabase3(path=path + 'tabl_aca/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 
 dsa = Dsa.DsaAlgorithm3(datas)
 
@@ -89,5 +89,3 @@ dsa.obs_param.query('SB_UID in @sel_sb').to_sql('staticparam_wto_aca', engine, i
                      if_exists='replace')
 print('stat param written')
 
-datas._cursor.close()
-datas._connection.close()

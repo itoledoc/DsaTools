@@ -37,10 +37,10 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_12m/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 except IOError:
     datas = Data.DsaDatabase3(path=path + 'tabl_12m/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 
 dsa = Dsa.DsaAlgorithm3(datas)
 
@@ -84,6 +84,3 @@ print('master written')
 dsa.obs_param.to_sql('staticparam_wto_test', engine, index_label='SBUID',
                      if_exists='replace')
 print('stat param written')
-
-datas._cursor.close()
-datas._connection.close()

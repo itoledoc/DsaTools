@@ -232,10 +232,10 @@ if __name__ == '__main__':
 
     try:
         datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + suffix,
-                                  allc2=False, loadp1=False)
+                                  allcyc=False, loadp1=False)
     except IOError:
         datas = Data.DsaDatabase3(path=path + suffix,
-                                  allc2=False, loadp1=False)
+                                  allcyc=False, loadp1=False)
 
     conf = ''
     if opts.conf in ['C36-1', 'C36-2', 'C36-3', 'C36-4', 'C36-5',

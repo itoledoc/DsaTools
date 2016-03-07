@@ -37,10 +37,10 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_tp/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 except IOError:
     datas = Data.DsaDatabase3(path=path + 'tabl_tp/',
-                              allc2=False, loadp1=False)
+                              allcyc=False, loadp1=False)
 
 dsa = Dsa.DsaAlgorithm3(datas)
 
@@ -90,5 +90,3 @@ print('stat param written')
 
 
 
-datas._cursor.close()
-datas._connection.close()
