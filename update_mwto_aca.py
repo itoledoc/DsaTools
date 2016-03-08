@@ -38,10 +38,10 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_aca/',
-                              allcyc=False, loadp1=False)
+                              loadp1=False)
 except IOError:
     datas = Data.DsaDatabase3(path=path + 'tabl_aca/',
-                              allcyc=False, loadp1=False)
+                              loadp1=False)
 
 dsa = Dsa.DsaAlgorithm3(datas)
 

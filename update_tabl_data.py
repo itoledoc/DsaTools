@@ -36,10 +36,14 @@ except OSError:
 
 try:
     datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + '_tabl_all/',
-                              allcyc=True, loadp1=True)
+                              loadp1=True,
+                              status=("Canceled", "Rejected",
+                                      "ObservingTimedOut"))
 except IOError:
     datas = Data.DsaDatabase3(path=path + '_tabl_all/',
-                              allcyc=True, loadp1=True)
+                              loadp1=True,
+                              status=("Canceled", "Rejected",
+                                      "ObservingTimedOut"))
 
 dsa = Dsa.DsaAlgorithm3(datas)
 

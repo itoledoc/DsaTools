@@ -36,11 +36,9 @@ except OSError:
     refr = True
 
 try:
-    datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_tp/',
-                              allcyc=False, loadp1=False)
+    datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_tp/')
 except IOError:
-    datas = Data.DsaDatabase3(path=path + 'tabl_tp/',
-                              allcyc=False, loadp1=False)
+    datas = Data.DsaDatabase3(path=path + 'tabl_tp/')
 
 dsa = Dsa.DsaAlgorithm3(datas)
 

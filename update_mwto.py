@@ -36,24 +36,23 @@ except OSError:
     refr = True
 
 try:
-    datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_12m/',
-                              allcyc=False, loadp1=False)
+    datas = Data.DsaDatabase3(refresh_apdm=refr, path=path + 'tabl_12m/')
 except IOError:
-    datas = Data.DsaDatabase3(path=path + 'tabl_12m/',
-                              allcyc=False, loadp1=False)
+    datas = Data.DsaDatabase3(path=path + 'tabl_12m/')
 
 dsa = Dsa.DsaAlgorithm3(datas)
 
 dsa.write_ephem_coords()
 dsa.static_param()
-pwv = pd.read_sql('SELECT * FROM pwv_data ORDER BY d_id DESC LIMIT 1', engine).pwv.values[0]
+pwv_table = pd.read_sql('SELECT * FROM pwv_data ORDER BY d_id DESC LIMIT 1', engine)
+pwv = pwv_table.pwv.values[0]
 dsa.selector(
     minha=-3., maxha=3., letterg=['A', 'B', 'C'],
     array_id='last', pwv=pwv)
 dsa.selection_df['PWV now'] = pwv
 dsa.selection_df['PWV now date'] = (
-    pd.read_sql('pwv_data', engine).date.values[0] + ' ' +
-    pd.read_sql('pwv_data', engine).time.values[0])
+    pwv_table.date.values[0] + ' ' +
+    pwv_table.time.values[0])
 dsa.selection_df['date'] = str(dsa._ALMA_ephem.date)
 dsa.selection_df['arrayname'] = dsa.arrays.iloc[0, 3]
 scorer = dsa.master_dsa_df.apply(
