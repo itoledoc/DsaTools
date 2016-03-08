@@ -52,7 +52,7 @@ dsa.static_param()
 pwv = pd.read_sql('SELECT * FROM pwv_data ORDER BY d_id DESC LIMIT 1', engine).pwv.values[0]
 dsa.selector(
     minha=-3., maxha=3., letterg=['A', 'B', 'C'],
-    conf=['C36-2'], pwv=pwv, sim=True)
+    array_id='C40-3', pwv=pwv, sim=True)
 dsa.selection_df['PWV now'] = pwv
 dsa.selection_df['PWV now date'] = (
     pd.read_sql('pwv_data', engine).date.values[0] + ' ' +

@@ -8,7 +8,7 @@ warnings.simplefilter(action="ignore", category=RuntimeWarning)
 datas = Data.DsaDatabase3(path='/users/aod/.cycle3pt/', loadp1=False)
 allsbC3 = pd.merge(
     pd.merge(
-        datas.projects.query('CYCLE not in ["2013.1", "2013.A"]'), 
+        datas.projects.query('CYCLE in ["2015.1", "2015.A"]'),
         datas.schedblocks, on='OBSPROJECT_UID'), 
     datas.sb_status, 
     on='SB_UID', how='left', suffixes=["", "_SB"])
