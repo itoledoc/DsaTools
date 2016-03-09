@@ -196,7 +196,7 @@ def add_observation(dsa_instance, sb_uid, time_sim):
     except:
         print("New?")
         dsa_instance.data.qastatus.ix[sb_uid] = [
-            1, 0, 0, 1, 0, time_sim, 'Pass', 'SUCCESS']
+            1, 0, 0, 0, time_sim, 'Pass', 'SUCCESS']
 
     return dsa_instance
 
